@@ -8,6 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -28,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
     private RadioGroup radioGroupa;
     private RadioButton radioA, radioB, radioC;
 
+    private int nrPytania = 0;
+    private int wybranaOdp = 0;
     private List<Pytanie> pytaniaNet;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
                             return;
                         }
                         pytaniaNet = response.body();
-                        textView.setText(pytaniaNet.get(0).getTrescPytania());
+                        wypiszPytanie(nrPytania);
                     }
 
                     @Override
@@ -75,5 +78,31 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
+
+        btn.setOnClickListener(
+                v -> {
+                    RadioButton temp = findViewById(radioGroupa.getCheckedRadioButtonId());
+                    RadioButton temp2 = (RadioButton) radioGroupa.getChildAt(pytaniaNet.get(nrPytania).getPoprawna());
+
+                    if (temp == null) return;
+
+                    if(temp == temp2) Toast.makeText(this, "Dobrze!", Toast.LENGTH_SHORT).show();
+                    else Toast.makeText(this, "Źle !", Toast.LENGTH_SHORT).show();
+
+                    nrPytania++;
+                    wypiszPytanie(nrPytania);
+                }
+        );
+
+
+    }
+
+    private void wypiszPytanie(int x){
+        radioGroupa.clearCheck();
+        Pytanie tempPytanie = pytaniaNet.get(x);
+        textView.setText(tempPytanie.getTrescPytania());
+        radioA.setText(tempPytanie.getOdpA());
+        radioB.setText(tempPytanie.getOdpB());
+        radioC.setText(tempPytanie.getOdpC());
     }
 }
